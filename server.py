@@ -18,7 +18,6 @@ def index():
         r = {}
         n = HeaderParser().parsestr(data)
         graph = [['Hop', 'Delay',]]
-        print len(n.get_all('Received'))
         c = len(n.get_all('Received'))
         for i in range(len(n.get_all('Received'))):
             line = n.get_all('Received')[i].split(';')
@@ -63,5 +62,5 @@ def index():
 
 
 if __name__ == '__main__':
-    app.debug = True
+    # app.debug = True
     app.run(host='0.0.0.0')
