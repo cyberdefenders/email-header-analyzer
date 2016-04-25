@@ -18,6 +18,8 @@ def index():
         r = {}
         n = HeaderParser().parsestr(data)
         graph = [['Hop', 'Delay',]]
+        print len(n.get_all('Received'))
+        c = len(n.get_all('Received'))
         for i in range(len(n.get_all('Received'))):
             line = n.get_all('Received')[i].split(';')
             try:
@@ -34,12 +36,13 @@ def index():
             else:
                 data = re.findall('()by(.*?)(?:with(.*?)(?:id|$)|id)', line[0], re.DOTALL)
 
-            r[i+1] = {
+            r[c] = {
                 'Timestmp': org_time,
                 'Time': datetime.fromtimestamp(org_time).strftime('%m/%d/%Y %I:%M:%S %p'),
                 'Delay': org_time - next_time,
                 'Direction': map(lambda x: x.replace('\n', ' '), map(str.strip, data[0]))
             }
+            c -= 1
         for i in r.values():
             if i['Direction'][0]:
                 graph.append(["From: %s" % i['Direction'][0], i['Delay']])
@@ -61,4 +64,4 @@ def index():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run()
+    app.run(host='0.0.0.0')
