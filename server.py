@@ -25,15 +25,15 @@ def index():
             except IndexError:
                 next_line = None
             org_time = email.utils.mktime_tz(email.utils.parsedate_tz(line[-1]))
-
             if not next_line:
                 next_time = org_time
             else:
                 next_time = email.utils.mktime_tz(email.utils.parsedate_tz(next_line[-1]))
             if line[0].startswith('from'):
-                data = re.findall('from\s+(.*?)\s+by(.*?)with(.*?)(?:id|$)', line[0], re.DOTALL)
+                data = re.findall('from\s+(.*?)\s+by(.*?)(?:with(.*?)(?:id|$)|id)', line[0], re.DOTALL)
             else:
                 data = re.findall('()by(.*?)(?:with(.*?)(?:id|$)|id)', line[0], re.DOTALL)
+
             r[i+1] = {
                 'Timestmp': org_time,
                 'Time': datetime.fromtimestamp(org_time).strftime('%m/%d/%Y %I:%M:%S %p'),
