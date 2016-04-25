@@ -18,10 +18,13 @@ def index():
         r = {}
         n = HeaderParser().parsestr(data)
         graph = [['Hop', 'Delay',]]
-        for i in range(len(n.get_all('Received'))):
-            line = n.get_all('Received')[i].split(';')
+        Received_header = n.get_all('Received')
+        Received_header.reverse()
+        print len(Received_header)
+        for i in range(len(Received_header)):
+            line = Received_header[i].split(';')
             try:
-                next_line = n.get_all('Received')[i+1].split(';')
+                next_line = Received_header[i+1].split(';')
             except IndexError:
                 next_line = None
             org_time = email.utils.mktime_tz(email.utils.parsedate_tz(line[-1]))
@@ -37,7 +40,7 @@ def index():
             r[i+1] = {
                 'Timestmp': org_time,
                 'Time': datetime.fromtimestamp(org_time).strftime('%m/%d/%Y %I:%M:%S %p'),
-                'Delay': org_time - next_time,
+                'Delay': next_time - org_time,
                 'Direction': map(lambda x: x.replace('\n', ' '), map(str.strip, data[0]))
             }
         for i in r.values():
@@ -61,4 +64,4 @@ def index():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run()
+    app.run(host='0.0.0.0')
