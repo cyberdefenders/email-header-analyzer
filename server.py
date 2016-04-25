@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        data = request.form['headers']
+        data = request.form['headers'].strip()
         r = {}
         n = HeaderParser().parsestr(data)
         graph = [['Hop', 'Delay',]]
