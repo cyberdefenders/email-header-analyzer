@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>Mail Header Analyzer (MHA)</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{{url_for('static', filename='css/ie10-viewport-bug-workaround.css')}}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{{url_for('static', filename='css/starter-template.css')}}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{{url_for('static', filename='js/ie-emulation-modes-warning.js')}}"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="{{url_for('static', filename='js/html5shiv.min.js')}}"></script>
+      <script src="{{url_for('static', filename='js/respond.min.js')}}"></script>
+    <![endif]-->
+    <link href="{{url_for('static', filename='css/bootstrap-table.min.css')}}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Mail Header Analyzer <small>(MHA)</small></a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    {#
+                    <li><a href="#about">About</a></li> #} {#
+                    <li><a href="#contact">Contact</a></li> #}
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+    <!-- Begin page content -->
+    <div class="container-fluid" style="padding-top: 30px;">
+        {% if data %}
+        <div class="row" style="padding-top: 15px;">
+            <div class="col-md-6">
+                <div class="well">
+                    <dl class="dl-horizontal">
+                        <dt>Subject</dt>
+                        <dd>{{ n.subject }}</dd>
+                        <dt>Message-ID</dt>
+                        <dd>{{ summary.MessageID }}</dd>
+                        <dt>Creation time</dt>
+                        <dd>{{ n.Date }}</dd>
+                        <dt>From</dt>
+                        <dd>{{ n.from }}</dd>
+                        <dt>To</dt>
+                        <dd>{{ n.to }}</dd>
+                        {% if n.cc %}
+                        <dt>Cc</dt>
+                        <dd>{{ n.cc }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="chart_div"></div>
+            </div>
+        </div>
+        <table id="table" data-toggle="table" data-search="true" data-show-columns="true" data-show-export="true" data-show-export="true" data-striped="true" data-show-toggle="true" data-show-refresh="true" data-page-size="13" data-sort-name="hop" data-sort-order="desc">
+            <thead style="background-color: #333333;color:#d4d4d4;">
+                <tr>
+                    <th data-field="hop" data-sortable="true">Hop</th>
+                    <th data-sortable="true">From</th>
+                    <th data-sortable="true">By</th>
+                    <th data-sortable="true">With</th>
+                    <th data-sortable="true">Time</th>
+                    <th data-sortable="true">Delay</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k, v in data.items() %}
+                <tr>
+                    <td>{{ k }}</td>
+                    <td>{{ v.Direction.0 }}</td>
+                    <td>{{ v.Direction.1 }}</td>
+                    <td>{{ v.Direction.2 }}</td>
+                    <td>{{ v.Time }}</td>
+                    <td>{{ v.Delay }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="panel panel-default" style="margin-top: 10px;">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <h3 class="panel-title">Other headers</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    {% for k,v in n.items() %} {% if k not in ['Received','Subject','From','To','Message-ID','CC','Date'] %}
+                    <tr>
+                        <th>{{ k }}</th>
+                        <td>{{ v }}</td>
+                    </tr>
+                    {% endif %} {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <form method="POST">
+            <div class="form-group">
+                <textarea name='headers' class="form-control" rows="25" placeholder="Paste the header in here." autofocus required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Analyze This !</button>
+        </form>
+        {% endif %}
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{{url_for('static', filename='js/ie10-viewport-bug-workaround.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap-table.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/loader.js')}}"></script>
+    <script type="text/javascript">
+    google.charts.load('current', {
+        packages: ['corechart', 'bar']
+    });
+    google.charts.setOnLoadCallback(drawBasic);
+
+    function drawBasic() {
+
+        var data = google.visualization.arrayToDataTable({{graph}});
+
+        var options = {
+            title: 'Total delay is {{ totalDelay }} seconds.',
+            chartArea: {
+                width: '50%'
+            },
+            hAxis: {
+                minValue: 0
+            },
+
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+    </script>
+</body>
+
+</html>
