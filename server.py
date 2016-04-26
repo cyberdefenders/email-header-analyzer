@@ -31,14 +31,18 @@ def index():
             else:
                 next_time = email.utils.mktime_tz(email.utils.parsedate_tz(next_line[-1]))
             if line[0].startswith('from'):
-                data = re.findall('from\s+(.*?)\s+by(.*?)(?:with(.*?)(?:id|$)|id)', line[0], re.DOTALL)
+                data = re.findall('from\s+(.*?)\s+by(.*?)(?:(?:with|via)(.*?)(?:id|$)|id)', line[0], re.DOTALL)
             else:
-                data = re.findall('()by(.*?)(?:with(.*?)(?:id|$)|id)', line[0], re.DOTALL)
+                data = re.findall('()by(.*?)(?:(?:with|via)(.*?)(?:id|$)|id)', line[0], re.DOTALL)
+
+            delay = org_time - next_time
+            if delay < 0:
+                delay = 0
 
             r[c] = {
                 'Timestmp': org_time,
                 'Time': datetime.fromtimestamp(org_time).strftime('%m/%d/%Y %I:%M:%S %p'),
-                'Delay': org_time - next_time,
+                'Delay': delay,
                 'Direction': map(lambda x: x.replace('\n', ' '), map(str.strip, data[0]))
             }
             c -= 1
