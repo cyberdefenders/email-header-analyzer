@@ -11,6 +11,20 @@ import re
 
 app = Flask(__name__)
 
+
+@app.context_processor
+def utility_processor():
+    def duration(seconds, _maxweeks=99999999999):
+        return ', '.join('%d %s' % (num, unit)
+             for num, unit in zip([(seconds // d) % m
+                       for d, m in ((604800, _maxweeks), 
+                                                        (86400, 7), (3600, 24), 
+                                                        (60, 60), (1, 60))],
+                      ['wk', 'd', 'hr', 'min', 'sec'])
+             if num)
+    return dict(duration=duration)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
