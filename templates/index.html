@@ -54,9 +54,9 @@
     <!-- Begin page content -->
     <div class="container-fluid" style="padding-top: 30px;">
         {% if data %}
-        <div class="row" style="padding-top: 15px;">
-            <div class="col-md-6">
-                <div class="well">
+        <div class="well well-lg">
+            <div class="row" style="padding-top: 15px;">
+                <div class="col-md-6">
                     <dl class="dl-horizontal">
                         <dt>Subject</dt>
                         <dd>{{ n.subject }}</dd>
@@ -74,9 +74,9 @@
                         {% endif %}
                     </dl>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div id="chart_div"></div>
+                <div class="col-md-6">
+                    <div id="chart_div"></div>
+                </div>
             </div>
         </div>
         <table id="table" data-toggle="table" data-search="true" data-show-columns="true" data-show-export="true" data-show-export="true" data-striped="true" data-show-toggle="true" data-show-refresh="true" data-page-size="13" data-sort-name="hop" data-sort-order="asc">
@@ -148,13 +148,16 @@
         var data = google.visualization.arrayToDataTable({{graph}});
 
         var options = {
+            backgroundColor: {
+                fill: '#f5f5f5'
+            },
             title: 'Total delay is {{ totalDelay }} seconds.',
             chartArea: {
                 width: '50%'
             },
             hAxis: {
                 minValue: 0
-            },
+            }
 
         };
 
