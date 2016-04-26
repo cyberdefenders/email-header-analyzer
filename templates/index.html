@@ -98,7 +98,9 @@
                     <td>{{ v.Direction.1 }}</td>
                     <td>{{ v.Direction.2 }}</td>
                     <td>{{ v.Time }}</td>
-                    <td>{{ duration(v.Delay) }}</td>
+                    <td>
+                        {% if duration(v.Delay) %} {{ duration(v.Delay) }} {% else %} {% if loop.first %} * {% else %}0{% endif %} {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -147,6 +149,7 @@
     function drawBasic() {
 
         var data = google.visualization.arrayToDataTable({{graph}});
+
 
         var options = {
             backgroundColor: {
