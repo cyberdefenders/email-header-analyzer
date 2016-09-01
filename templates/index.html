@@ -25,6 +25,7 @@
       <script src="{{url_for('static', filename='js/respond.min.js')}}"></script>
     <![endif]-->
     <link href="{{url_for('static', filename='css/bootstrap-table.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/flag-sprites.min.css')}}" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -74,12 +75,15 @@
                         {% endif %}
                     </dl>
                 </div>
+                {% if delayed %}
                 <div class="col-md-6">
-                    <div id="chart_div"></div>
+                    {# <div id="chart_div"></div>#}
+                    {{ chart|safe }}
                 </div>
+                {% endif %}
             </div>
         </div>
-        <table id="table" data-toggle="table" data-search="true" data-show-columns="true" data-show-export="true" data-show-export="true" data-striped="true" data-show-toggle="true" data-show-refresh="true" data-page-size="13" data-sort-name="hop" data-sort-order="asc">
+        <table id="table" data-toggle="table" data-search="true" data-show-columns="true" data-striped="true" data-show-toggle="true" data-show-refresh="true" data-page-size="13" data-sort-name="hop" data-sort-order="asc">
             <thead style="background-color: #333333;color:#d4d4d4;">
                 <tr>
                     <th data-field="hop" data-sortable="true">Hop</th>
@@ -94,8 +98,8 @@
                 {% for k, v in data.items() %}
                 <tr>
                     <td>{{ k }}</td>
-                    <td>{{ v.Direction.0 }}</td>
-                    <td>{{ v.Direction.1 }}</td>
+                    <td>{{ v.Direction.0 }}{% if country(v.Direction.0).iso_code %}<span class="pull-right"><a href="#" data-toggle="tooltip" data-placement="top" title="{{country(v.Direction.0).country_name}}"><i class="flag flag-{{country(v.Direction.0).iso_code}}"></i></a></span>{% endif %}</td>
+                    <td>{{ v.Direction.1 }}{% if country(v.Direction.1).iso_code %}<span class="pull-right"><a href="#" data-toggle="tooltip" data-placement="top" title="{{country(v.Direction.1).country_name}}"><i class="flag flag-{{country(v.Direction.1).iso_code}}"></i></a></span>{% endif %}</td>
                     <td>{{ v.Direction.2 }}</td>
                     <td>{{ v.Time }}</td>
                     <td>
@@ -138,39 +142,11 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{{url_for('static', filename='js/ie10-viewport-bug-workaround.js')}}"></script>
     <script src="{{url_for('static', filename='js/bootstrap-table.min.js')}}"></script>
-    {% if data %}
-    <script src="{{url_for('static', filename='js/loader.js')}}"></script>
     <script type="text/javascript">
-    google.charts.load('current', {
-        packages: ['corechart', 'bar']
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
     });
-    google.charts.setOnLoadCallback(drawBasic);
-
-    function drawBasic() {
-
-        var data = google.visualization.arrayToDataTable({{graph}});
-
-
-        var options = {
-            backgroundColor: {
-                fill: '#f5f5f5'
-            },
-            title: 'Total delay is {{ duration(totalDelay) }}.',
-            chartArea: {
-                width: '50%'
-            },
-            hAxis: {
-                minValue: 0
-            }
-
-        };
-
-        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-
-        chart.draw(data, options);
-    }
     </script>
-    {% endif %}
 </body>
 
 </html>
