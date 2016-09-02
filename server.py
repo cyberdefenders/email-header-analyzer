@@ -136,6 +136,8 @@ def index():
         custom_style = Style(
             background='transparent',
             plot_background='transparent',
+            font_family='googlefont:Open Sans',
+            title_font_size=12,
         )
         line_chart = pygal.HorizontalBar(style=custom_style, height=200)
         line_chart.tooltip_fancy_mode = False
