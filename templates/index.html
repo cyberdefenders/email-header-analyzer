@@ -53,7 +53,7 @@
         </div>
     </nav>
     <!-- Begin page content -->
-    <div class="container-fluid" style="padding-top: 30px;">
+    <div class="container-fluid" style="padding-top: 50px;">
         {% if data %}
         <div class="well well-lg">
             <div class="row" style="padding-top: 15px;">
@@ -126,12 +126,16 @@
             </div>
         </div>
         {% else %}
-        <form method="POST">
-            <div class="form-group">
-                <textarea name='headers' class="form-control" rows="25" placeholder="Paste the header in here." autofocus required></textarea>
+        <div class="row">
+            <div class="col-md-12">
+                <form method="POST">
+                    <div class="form-group">
+                        <textarea name='headers' class="form-control" rows="25" placeholder="Paste the header in here." autofocus required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Analyze This !</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Analyze This !</button>
-        </form>
+        </div>
         {% endif %}
     </div>
     <!-- Bootstrap core JavaScript

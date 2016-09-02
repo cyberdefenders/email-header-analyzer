@@ -44,13 +44,17 @@ def utility_processor():
 @app.context_processor
 def utility_processor():
     def duration(seconds, _maxweeks=99999999999):
-        return ', '.join('%d %s' % (num, unit)
-                         for num, unit in zip([(seconds // d) % m
-                                               for d, m in ((604800, _maxweeks),
-                                                            (86400, 7), (3600, 24),
-                                                            (60, 60), (1, 60))],
-                                              ['wk', 'd', 'hr', 'min', 'sec'])
-                         if num)
+        return ', '.join(
+            '%d %s' % (num, unit)
+            for num, unit in zip([
+                (seconds // d) % m
+                for d, m in (
+                    (604800, _maxweeks),
+                    (86400, 7), (3600, 24),
+                    (60, 60), (1, 60))
+            ], ['wk', 'd', 'hr', 'min', 'sec'])
+            if num
+        )
     return dict(duration=duration)
 
 
@@ -59,8 +63,7 @@ def index():
     if request.method == 'POST':
         data = request.form['headers'].strip()
         r = {}
-        n = HeaderParser().parsestr(data)
-        # graph = [['Hop', 'Delay', ]]
+        n = HeaderParser().parsestr(data.encode('ascii', 'ignore'))
         graph = []
         c = len(n.get_all('Received'))
         for i in range(len(n.get_all('Received'))):
@@ -70,31 +73,56 @@ def index():
             except IndexError:
                 next_line = None
             org_time = email.utils.mktime_tz(
-                email.utils.parsedate_tz(line[-1]))
+                email.utils.parsedate_tz(line[1]))
             if not next_line:
                 next_time = org_time
             else:
                 next_time = email.utils.mktime_tz(
-                    email.utils.parsedate_tz(next_line[-1]))
+                    email.utils.parsedate_tz(next_line[1]))
 
             if line[0].startswith('from'):
                 data = re.findall(
-                    'from\s+(.*?)\s+by(.*?)(?:(?:with|via)(.*?)(?:id|$)|id)', line[0], re.DOTALL)
+                    """
+                    from\s+
+                    (.*?)\s+
+                    by(.*?)
+                    (?:
+                        (?:with|via)
+                        (.*?)
+                        (?:id|$)
+                        |id|$
+                    )""", line[0], re.DOTALL | re.X)
             else:
                 data = re.findall(
-                    '()by(.*?)(?:(?:with|via)(.*?)(?:id|$)|id)', line[0], re.DOTALL)
+                    """
+                    ()by
+                    (.*?)
+                    (?:
+                        (?:with|via)
+                        (.*?)
+                        (?:id|$)
+                        |id
+                    )""", line[0], re.DOTALL | re.X)
 
             delay = org_time - next_time
             if delay < 0:
                 delay = 0
 
-            r[c] = {
-                'Timestmp': org_time,
-                'Time': datetime.fromtimestamp(org_time).strftime('%m/%d/%Y %I:%M:%S %p'),
-                'Delay': delay,
-                'Direction': map(lambda x: x.replace('\n', ' '), map(str.strip, data[0]))
-            }
-            c -= 1
+            try:
+                time = datetime.fromtimestamp(org_time)
+                ftime = time.strftime('%m/%d/%Y %I:%M:%S %p')
+                r[c] = {
+                    'Timestmp': org_time,
+                    'Time': ftime,
+                    'Delay': delay,
+                    'Direction': map(
+                        lambda x: x.replace('\n', ' '),
+                        map(str.strip, data[0])
+                    )
+                }
+                c -= 1
+            except IndexError:
+                pass
 
         for i in r.values():
             if i['Direction'][0]:
@@ -103,6 +131,7 @@ def index():
                 graph.append(["By: %s" % i['Direction'][1], i['Delay']])
 
         totalDelay = sum(map(lambda x: x['Delay'], r.values()))
+        fTotalDelay = utility_processor()['duration'](totalDelay)
         delayed = True if totalDelay else False
 
         custom_style = Style(
@@ -112,7 +141,7 @@ def index():
         line_chart = pygal.HorizontalBar(style=custom_style, height=200)
         line_chart.tooltip_fancy_mode = False
         line_chart.js = ['%s/js/pygal-tooltips.min.js' % app.static_url_path]
-        line_chart.title = 'Total Delay is: %s' % utility_processor()['duration'](totalDelay)
+        line_chart.title = 'Total Delay is: %s' % fTotalDelay
         line_chart.x_title = 'Delay in seconds.'
         for i in graph:
             line_chart.add(i[0], i[1])
