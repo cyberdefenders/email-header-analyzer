@@ -1,22 +1,23 @@
 ## Mail Header Analyzer (MHA)
 ![mha](https://cloud.githubusercontent.com/assets/1170490/18221866/b7b362d6-718e-11e6-9fa0-2e7f8bc2b9d7.png)
-#### What is MHA:
-==
+
+
+## What is MHA:
 Mail header analyzer is a tool written in [flask] (http://flask.pocoo.org/) for parsing email headers and converting them to a human readable format and it also can:    
 * Identify hop delays.
 * Identify the source of the email.
 * Identify hop country.
 
-#### MHA is an alternative for the following:
-==
+
+## MHA is an alternative for the following:
 | Name | Dev | Issues |
 | ---- | --- | ----- |
 | [MessageHeader](https://toolbox.googleapps.com/apps/messageheader/) | Google | Not showing all the hops. |
 | [EmailHeaders](https://mxtoolbox.com/Public/Tools/EmailHeaders.aspx) | Mxtoolbox | Not accurate and slow. |
 | [Message Header Analyzer](https://testconnectivity.microsoft.com/MHA/Pages/mha.aspx) | Microsoft | Broken UI. |
 
-#### Installation
-==
+
+## Installation
 Install system dependencies:  
 ```
 sudo apt-get update
