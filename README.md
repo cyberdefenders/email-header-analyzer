@@ -18,6 +18,7 @@ Install system dependencies:
 ```
 sudo apt-get update
 sudo apt-get install python-pip
+sudo pip install virtualenv
 ```
 Create a Python virtual environment and activate it:  
 ```
