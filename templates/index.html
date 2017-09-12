@@ -63,7 +63,7 @@
                         <dd>{{ n.subject }}</dd>
                         <dt>Message-ID</dt>
                         <dd>{{ summary.MessageID }}</dd>
-                        <dt>Creation time</dt>
+                        <dt>Creation time (Date)</dt>
                         <dd>{{ n.Date }}</dd>
                         <dt>From</dt>
                         <dd>{{ n.from }}</dd>
@@ -146,6 +146,7 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{{url_for('static', filename='js/ie10-viewport-bug-workaround.js')}}"></script>
     <script src="{{url_for('static', filename='js/bootstrap-table.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/pygal-tooltips.min.js')}}"></script>
     <script type="text/javascript">
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();

@@ -3,7 +3,8 @@ from flask import render_template
 from flask import request
 
 from email.Parser import HeaderParser
-import email.utils
+import time
+import dateutil.parser
 
 from datetime import datetime
 import re
@@ -64,20 +65,33 @@ def index():
         r = {}
         n = HeaderParser().parsestr(data.encode('ascii', 'ignore'))
         graph = []
-        c = len(n.get_all('Received'))
-        for i in range(len(n.get_all('Received'))):
-            line = n.get_all('Received')[i].split(';')
+        received = n.get_all('Received')
+        if received:
+            received = [i for i in received if ('from' in i or 'by' in i)]
+        c = len(received)
+        for i in range(len(received)):
+            if ';' in received[i]:
+                line = received[i].split(';')
+            else:
+                line = received[i].split('\r\n')
+            line = map(str.strip, line)
+            line = map(lambda x: x.replace('\r\n', ''), line)
             try:
-                next_line = n.get_all('Received')[i + 1].split(';')
+                if ';' in received[i + 1]:
+                    next_line = received[i + 1].split(';')
+                else:
+                    next_line = received[i + 1].split('\r\n')
+                next_line = map(str.strip, next_line)
+                next_line = map(lambda x: x.replace('\r\n', ''), next_line)
             except IndexError:
                 next_line = None
-            org_time = email.utils.mktime_tz(
-                email.utils.parsedate_tz(line[1]))
+            org_time = time.mktime(
+                dateutil.parser.parse(line[1], fuzzy=True).timetuple())
             if not next_line:
                 next_time = org_time
             else:
-                next_time = email.utils.mktime_tz(
-                    email.utils.parsedate_tz(next_line[1]))
+                next_time = time.mktime(dateutil.parser.parse(
+                    next_line[1], fuzzy=True).timetuple())
 
             if line[0].startswith('from'):
                 data = re.findall(
@@ -108,8 +122,8 @@ def index():
                 delay = 0
 
             try:
-                time = datetime.fromtimestamp(org_time)
-                ftime = time.strftime('%m/%d/%Y %I:%M:%S %p')
+                xtime = datetime.fromtimestamp(org_time)
+                ftime = xtime.strftime('%m/%d/%Y %I:%M:%S %p')
                 r[c] = {
                     'Timestmp': org_time,
                     'Time': ftime,
@@ -139,9 +153,10 @@ def index():
             font_family='googlefont:Open Sans',
             title_font_size=12,
         )
-        line_chart = pygal.HorizontalBar(style=custom_style, height=200)
+        line_chart = pygal.HorizontalBar(
+            style=custom_style, height=250, legend_at_bottom=True,
+            tooltip_border_radius=10)
         line_chart.tooltip_fancy_mode = False
-        line_chart.js = ['%s/js/pygal-tooltips.min.js' % app.static_url_path]
         line_chart.title = 'Total Delay is: %s' % fTotalDelay
         line_chart.x_title = 'Delay in seconds.'
         for i in graph:
