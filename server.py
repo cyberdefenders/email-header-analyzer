@@ -15,6 +15,8 @@ from pygal.style import Style
 from IPy import IP
 import geoip2.database
 
+import argparse
+
 app = Flask(__name__)
 reader = geoip2.database.Reader(
     '%s/data/GeoLite2-Country.mmdb' % app.static_folder)
@@ -179,5 +181,12 @@ def index():
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='127.0.0.1', port=8080)
+    parser = argparse.ArgumentParser(description="Mail Header Analyser")
+    parser.add_argument("-d", "--debug", action="store_true", default=False,
+                        help="Enable debug mode")
+    parser.add_argument("-b", "--bind", default="127.0.0.1", type=str)
+    parser.add_argument("-p", "--port", default="8080", type=int)
+    args = parser.parse_args()
+
+    app.debug = args.debug
+    app.run(host=args.bind, port=args.port)
