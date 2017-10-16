@@ -39,6 +39,20 @@ cd MHA
 pip install -r requirements.txt
 ```
 Run the development server:  
-`python server.py`
+`python server.py -d`
+
+You can change the bind address or port by specifying the appropriate options:
+`python server.py -b 0.0.0.0 -p 8080`
 
 Everything should go well, now visit [http://localhost:8080](http://localhost:8080).
+
+## Docker
+
+A `Dockerfile` is provided if you wish to build a docker image.
+
+`docker build -t mha:latest .`
+
+You can then run a container with:
+
+`docker run -d -p 8080:8080 mha:latest`
+
