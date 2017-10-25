@@ -3,7 +3,7 @@
 
 
 ## What is MHA:
-Mail header analyzer is a tool written in [flask] (http://flask.pocoo.org/) for parsing email headers and converting them to a human readable format and it also can:    
+Mail header analyzer is a tool written in [flask](http://flask.pocoo.org/) for parsing email headers and converting them to a human readable format and it also can:    
 * Identify hop delays.
 * Identify the source of the email.
 * Identify hop country.
@@ -55,4 +55,3 @@ A `Dockerfile` is provided if you wish to build a docker image.
 You can then run a container with:
 
 `docker run -d -p 8080:8080 mha:latest`
-
