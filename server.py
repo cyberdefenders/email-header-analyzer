@@ -60,6 +60,19 @@ def utility_processor():
     return dict(duration=duration)
 
 
+def dateParser(line):
+    try:
+        r = dateutil.parser.parse(line, fuzzy=True).timetuple()
+
+    # if the fuzzy parser failed to parse the line due to
+    # incorrect timezone information issue #5 GitHub
+    except ValueError:
+        r = re.findall('^(.*?)\s*\(', line)
+        if r:
+            r = dateutil.parser.parse(r[0]).timetuple()
+    return time.mktime(r)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -87,13 +100,12 @@ def index():
                 next_line = map(lambda x: x.replace('\r\n', ''), next_line)
             except IndexError:
                 next_line = None
-            org_time = time.mktime(
-                dateutil.parser.parse(line[1], fuzzy=True).timetuple())
+
+            org_time = dateParser(line[1])
             if not next_line:
                 next_time = org_time
             else:
-                next_time = time.mktime(dateutil.parser.parse(
-                    next_line[1], fuzzy=True).timetuple())
+                next_time = dateParser(next_line[1])
 
             if line[0].startswith('from'):
                 data = re.findall(
