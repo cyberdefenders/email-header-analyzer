@@ -62,15 +62,15 @@ def utility_processor():
 
 def dateParser(line):
     try:
-        r = dateutil.parser.parse(line, fuzzy=True).timetuple()
+        r = dateutil.parser.parse(line, fuzzy=True)
 
     # if the fuzzy parser failed to parse the line due to
     # incorrect timezone information issue #5 GitHub
     except ValueError:
         r = re.findall('^(.*?)\s*\(', line)
         if r:
-            r = dateutil.parser.parse(r[0]).timetuple()
-    return time.mktime(r)
+            r = dateutil.parser.parse(r[0])
+    return r
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -131,13 +131,12 @@ def index():
                         |id
                     )""", line[0], re.DOTALL | re.X)
 
-            delay = org_time - next_time
+            delay = org_time.second - next_time.second
             if delay < 0:
                 delay = 0
 
             try:
-                xtime = datetime.fromtimestamp(org_time)
-                ftime = xtime.strftime('%m/%d/%Y %I:%M:%S %p')
+                ftime = org_time.strftime('%m/%d/%Y %I:%M:%S %p')
                 r[c] = {
                     'Timestmp': org_time,
                     'Time': ftime,
