@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
-from email.Parser import HeaderParser
+from email import parser
 import time
 import dateutil.parser
 
@@ -78,7 +78,8 @@ def index():
     if request.method == 'POST':
         data = request.form['headers'].strip()
         r = {}
-        n = HeaderParser().parsestr(data.encode('ascii', 'ignore'))
+        # Removed data.encode('ascii', 'ignore') because it seems to not required
+        n = parser.Parser().parsestr(data.encode('ascii','ignore'))
         graph = []
         received = n.get_all('Received')
         if received:
@@ -90,14 +91,14 @@ def index():
             else:
                 line = received[i].split('\r\n')
             line = map(str.strip, line)
-            line = map(lambda x: x.replace('\r\n', ''), line)
+            line = list(map(lambda x: x.replace('\r\n', ''), line))
             try:
                 if ';' in received[i + 1]:
                     next_line = received[i + 1].split(';')
                 else:
                     next_line = received[i + 1].split('\r\n')
-                next_line = map(str.strip, next_line)
-                next_line = map(lambda x: x.replace('\r\n', ''), next_line)
+                next_line = list(map(str.strip, next_line))
+                next_line = list(map((lambda x: x.replace('\r\n', '')), next_line))
             except IndexError:
                 next_line = None
 
@@ -141,9 +142,9 @@ def index():
                     'Timestmp': org_time,
                     'Time': ftime,
                     'Delay': delay,
-                    'Direction': map(
+                    'Direction': list(map(
                         lambda x: x.replace('\n', ' '),
-                        map(str.strip, data[0])
+                        map(str.strip, data[0]))
                     )
                 }
                 c -= 1
@@ -192,12 +193,12 @@ def index():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Mail Header Analyser")
-    parser.add_argument("-d", "--debug", action="store_true", default=False,
+    paramparser = argparse.ArgumentParser(description="Mail Header Analyser")
+    paramparser.add_argument("-d", "--debug", action="store_true", default=False,
                         help="Enable debug mode")
-    parser.add_argument("-b", "--bind", default="127.0.0.1", type=str)
-    parser.add_argument("-p", "--port", default="8080", type=int)
-    args = parser.parse_args()
+    paramparser.add_argument("-b", "--bind", default="127.0.0.1", type=str)
+    paramparser.add_argument("-p", "--port", default="8080", type=int)
+    args = paramparser.parse_args()
 
     app.debug = args.debug
     app.run(host=args.bind, port=args.port)
