@@ -131,12 +131,13 @@ def index():
                         |id
                     )""", line[0], re.DOTALL | re.X)
 
-            delay = org_time.second - next_time.second
+            delay = (org_time - next_time).seconds
             if delay < 0:
                 delay = 0
 
             try:
-                ftime = org_time.strftime('%m/%d/%Y %I:%M:%S %p')
+                ftime = org_time.utctimetuple()
+                ftime = time.strftime('%m/%d/%Y %I:%M:%S %p', ftime)
                 r[c] = {
                     'Timestmp': org_time,
                     'Time': ftime,
