@@ -67,7 +67,7 @@ def dateParser(line):
     # if the fuzzy parser failed to parse the line due to
     # incorrect timezone information issue #5 GitHub
     except ValueError:
-        r = re.findall('^(.*?)\s*\(', line)
+        r = re.findall('^(.*?)\s*(?:\(|utc)', line, re.I)
         if r:
             r = dateutil.parser.parse(r[0])
     return r
@@ -116,8 +116,8 @@ def index():
                     (?:
                         (?:with|via)
                         (.*?)
-                        (?:id|$)
-                        |id|$
+                        (?:id\s|$)
+                        |id\s|$
                     )""", line[0], re.DOTALL | re.X)
             else:
                 data = re.findall(
@@ -127,8 +127,8 @@ def index():
                     (?:
                         (?:with|via)
                         (.*?)
-                        (?:id|$)
-                        |id
+                        (?:id\s|$)
+                        |id\s
                     )""", line[0], re.DOTALL | re.X)
 
             delay = (org_time - next_time).seconds
