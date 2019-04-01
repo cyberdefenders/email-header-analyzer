@@ -67,7 +67,7 @@ def dateParser(line):
     # if the fuzzy parser failed to parse the line due to
     # incorrect timezone information issue #5 GitHub
     except ValueError:
-        r = re.findall('^(.*?)\s*\(', line)
+        r = re.findall('^(.*?)\s*(?:\(|utc)', line, re.I)
         if r:
             r = dateutil.parser.parse(r[0])
     return r
@@ -101,11 +101,11 @@ def index():
             except IndexError:
                 next_line = None
 
-            org_time = dateParser(line[1])
+            org_time = dateParser(line[-1])
             if not next_line:
                 next_time = org_time
             else:
-                next_time = dateParser(next_line[1])
+                next_time = dateParser(next_line[-1])
 
             if line[0].startswith('from'):
                 data = re.findall(
@@ -116,8 +116,8 @@ def index():
                     (?:
                         (?:with|via)
                         (.*?)
-                        (?:id|$)
-                        |id|$
+                        (?:\sid\s|$)
+                        |\sid\s|$
                     )""", line[0], re.DOTALL | re.X)
             else:
                 data = re.findall(
@@ -127,16 +127,17 @@ def index():
                     (?:
                         (?:with|via)
                         (.*?)
-                        (?:id|$)
-                        |id
+                        (?:\sid\s|$)
+                        |\sid\s
                     )""", line[0], re.DOTALL | re.X)
 
-            delay = org_time.second - next_time.second
+            delay = (org_time - next_time).seconds
             if delay < 0:
                 delay = 0
 
             try:
-                ftime = org_time.strftime('%m/%d/%Y %I:%M:%S %p')
+                ftime = org_time.utctimetuple()
+                ftime = time.strftime('%m/%d/%Y %I:%M:%S %p', ftime)
                 r[c] = {
                     'Timestmp': org_time,
                     'Time': ftime,
