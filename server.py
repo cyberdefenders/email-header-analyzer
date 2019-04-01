@@ -116,8 +116,8 @@ def index():
                     (?:
                         (?:with|via)
                         (.*?)
-                        (?:id\s|$)
-                        |id\s|$
+                        (?:\sid\s|$)
+                        |\sid\s|$
                     )""", line[0], re.DOTALL | re.X)
             else:
                 data = re.findall(
@@ -127,8 +127,8 @@ def index():
                     (?:
                         (?:with|via)
                         (.*?)
-                        (?:id\s|$)
-                        |id\s
+                        (?:\sid\s|$)
+                        |\sid\s
                     )""", line[0], re.DOTALL | re.X)
 
             delay = (org_time - next_time).seconds
