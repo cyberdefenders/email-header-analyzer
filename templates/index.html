@@ -25,7 +25,7 @@
       <script src="{{url_for('static', filename='js/respond.min.js')}}"></script>
     <![endif]-->
     <link href="{{url_for('static', filename='css/bootstrap-table.min.css')}}" rel="stylesheet">
-    <link href="{{url_for('static', filename='css/flag-sprites.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{url_for('static', filename='css/flag-sprites.min.css')}}" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -33,7 +33,8 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -47,6 +48,10 @@
                     {#
                     <li><a href="#about">About</a></li> #} {#
                     <li><a href="#contact">Contact</a></li> #}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/lnxg33k/MHA"><img alt="Brand"
+                                src="{{url_for('static', filename='imgs/gh.png')}}" style="height: 17px;"></a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -83,7 +88,9 @@
                 {% endif %}
             </div>
         </div>
-        <table id="table" data-toggle="table" data-search="true" data-show-columns="true" data-striped="true" data-show-toggle="true" data-show-refresh="true" data-page-size="13" data-sort-name="hop" data-sort-order="asc">
+        <table id="table" data-toggle="table" data-search="true" data-show-columns="true" data-striped="true"
+            data-show-toggle="true" data-show-refresh="true" data-page-size="13" data-sort-name="hop"
+            data-sort-order="asc">
             <thead style="background-color: #333333;color:#d4d4d4;">
                 <tr>
                     <th data-field="hop" data-sortable="true">Hop</th>
@@ -98,12 +105,21 @@
                 {% for k, v in data.items() %}
                 <tr>
                     <td>{{ k }}</td>
-                    <td>{{ v.Direction.0 }}{% if country(v.Direction.0).iso_code %}<span class="pull-right"><a href="#" data-toggle="tooltip" data-placement="top" title="{{country(v.Direction.0).country_name}}"><i class="flag flag-{{country(v.Direction.0).iso_code}}"></i></a></span>{% endif %}</td>
-                    <td>{{ v.Direction.1 }}{% if country(v.Direction.1).iso_code %}<span class="pull-right"><a href="#" data-toggle="tooltip" data-placement="top" title="{{country(v.Direction.1).country_name}}"><i class="flag flag-{{country(v.Direction.1).iso_code}}"></i></a></span>{% endif %}</td>
+                    <td>{{ v.Direction.0 }}{% if country(v.Direction.0).iso_code %}<span class="pull-right"><a href="#"
+                                data-toggle="tooltip" data-placement="top"
+                                title="{{country(v.Direction.0).country_name}}"><i
+                                    class="flag flag-{{country(v.Direction.0).iso_code}}"></i></a></span>{% endif %}
+                    </td>
+                    <td>{{ v.Direction.1 }}{% if country(v.Direction.1).iso_code %}<span class="pull-right"><a href="#"
+                                data-toggle="tooltip" data-placement="top"
+                                title="{{country(v.Direction.1).country_name}}"><i
+                                    class="flag flag-{{country(v.Direction.1).iso_code}}"></i></a></span>{% endif %}
+                    </td>
                     <td>{{ v.Direction.2 }}</td>
                     <td>{{ v.Time }}</td>
                     <td>
-                        {% if duration(v.Delay) %} {{ duration(v.Delay) }} {% else %} {% if loop.first %} * {% else %}0{% endif %} {% endif %}
+                        {% if duration(v.Delay) %} {{ duration(v.Delay) }} {% else %} {% if loop.first %} *
+                        {% else %}0{% endif %} {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -116,7 +132,8 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered">
-                    {% for k,v in n.items() %} {% if k not in ['Received','Subject','From','To','Message-ID','CC','Date'] %}
+                    {% for k,v in n.items() %}
+                    {% if k not in ['Received','Subject','From','To','Message-ID','CC','Date'] %}
                     <tr>
                         <th>{{ k }}</th>
                         <td>{{ v }}</td>
@@ -130,7 +147,8 @@
             <div class="col-md-12">
                 <form method="POST">
                     <div class="form-group">
-                        <textarea name='headers' class="form-control" rows="25" placeholder="Paste the header in here." autofocus required></textarea>
+                        <textarea name='headers' class="form-control" rows="25" placeholder="Paste the header in here."
+                            autofocus required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg btn-block">Analyze This !</button>
                 </form>
@@ -148,9 +166,9 @@
     <script src="{{url_for('static', filename='js/bootstrap-table.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/pygal-tooltips.min.js')}}"></script>
     <script type="text/javascript">
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
     </script>
 </body>
 
