@@ -101,11 +101,11 @@ def index():
             except IndexError:
                 next_line = None
 
-            org_time = dateParser(line[1])
+            org_time = dateParser(line[-1])
             if not next_line:
                 next_time = org_time
             else:
-                next_time = dateParser(next_line[1])
+                next_time = dateParser(next_line[-1])
 
             if line[0].startswith('from'):
                 data = re.findall(
