@@ -73,16 +73,27 @@ def dateParser(line):
     return r
 
 
+def getHeaderVal(h, data, rex='\s*(.*?)\n\S+:\s'):
+    r = re.findall('%s:%s' % (h, rex), data, re.X | re.DOTALL | re.I)
+    if r:
+        return r[0].strip()
+    else:
+        return None
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        data = request.form['headers'].strip()
+        mail_data = request.form['headers'].strip().encode('ascii', 'ignore')
         r = {}
-        n = HeaderParser().parsestr(data.encode('ascii', 'ignore'))
+        n = HeaderParser().parsestr(mail_data)
         graph = []
         received = n.get_all('Received')
         if received:
             received = [i for i in received if ('from' in i or 'by' in i)]
+        else:
+            received = re.findall(
+                'Received:\s*(.*?)\n\S+:\s+', mail_data, re.X | re.DOTALL | re.I)
         c = len(received)
         for i in range(len(received)):
             if ';' in received[i]:
@@ -90,7 +101,7 @@ def index():
             else:
                 line = received[i].split('\r\n')
             line = map(str.strip, line)
-            line = map(lambda x: x.replace('\r\n', ''), line)
+            line = map(lambda x: x.replace('\r\n', ' '), line)
             try:
                 if ';' in received[i + 1]:
                     next_line = received[i + 1].split(';')
@@ -178,12 +189,12 @@ def index():
         chart = line_chart.render(is_unicode=True)
 
         summary = {
-            'From': n.get('from'),
-            'To': n.get('to'),
-            'Cc': n.get('cc'),
-            'Subject': n.get('Subject'),
-            'MessageID': n.get('Message-ID'),
-            'Date': n.get('Date'),
+            'From': n.get('From') or getHeaderVal('from', mail_data),
+            'To': n.get('to') or getHeaderVal('to', mail_data),
+            'Cc': n.get('cc') or getHeaderVal('cc', mail_data),
+            'Subject': n.get('Subject') or getHeaderVal('Subject', mail_data),
+            'MessageID': n.get('Message-ID') or getHeaderVal('Message-ID', mail_data),
+            'Date': n.get('Date') or getHeaderVal('Date', mail_data),
         }
         return render_template(
             'index.html', data=r, delayed=delayed, summary=summary,

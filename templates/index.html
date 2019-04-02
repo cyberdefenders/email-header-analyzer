@@ -69,14 +69,14 @@
                         <dt>Message-ID</dt>
                         <dd>{{ summary.MessageID }}</dd>
                         <dt>Creation time (Date)</dt>
-                        <dd>{{ n.Date }}</dd>
+                        <dd>{{ summary.Date }}</dd>
                         <dt>From</dt>
-                        <dd>{{ n.from }}</dd>
+                        <dd>{{ summary.From }}</dd>
                         <dt>To</dt>
-                        <dd>{{ n.to }}</dd>
-                        {% if n.cc %}
+                        <dd>{{ summary.To }}</dd>
+                        {% if summary.Cc %}
                         <dt>Cc</dt>
-                        <dd>{{ n.cc }}</dd>
+                        <dd>{{ summary.Cc }}</dd>
                         {% endif %}
                     </dl>
                 </div>
