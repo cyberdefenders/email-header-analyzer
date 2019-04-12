@@ -1,9 +1,9 @@
-## Mail Header Analyzer (MHA)
+## E-Mail Header Analyzer (MHA)
 ![mha](https://cloud.githubusercontent.com/assets/1170490/18221866/b7b362d6-718e-11e6-9fa0-2e7f8bc2b9d7.png)
 
 
-## What is MHA:
-Mail header analyzer is a tool written in [flask](http://flask.pocoo.org/) for parsing email headers and converting them to a human readable format and it also can:    
+## What is E-Mail header analyzer (MHA):
+E-Mail header analyzer is a tool written in [flask](http://flask.pocoo.org/) for parsing email headers and converting them to a human readable format and it also can:    
 * Identify hop delays.
 * Identify the source of the email.
 * Identify hop country.
