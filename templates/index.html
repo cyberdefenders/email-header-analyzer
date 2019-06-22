@@ -128,12 +128,46 @@
         <div class="panel panel-default" style="margin-top: 10px;">
             <!-- Default panel contents -->
             <div class="panel-heading">
+                <h3 class="panel-title">Security Headers</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    {% for k,v in n.items() %}
+                    {% if k in security_headers %}
+                    <tr>
+                        <th>{{ k }}</th>
+                        <td>{{ v }}</td>
+                    </tr>
+                    {% endif %} {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 10px;">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <h3 class="panel-title">X- headers</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    {% for k,v in n.items() %}
+                    {% if k.startswith('X-') %}
+                    <tr>
+                        <th>{{ k }}</th>
+                        <td>{{ v }}</td>
+                    </tr>
+                    {% endif %} {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 10px;">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
                 <h3 class="panel-title">Other headers</h3>
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     {% for k,v in n.items() %}
-                    {% if k not in ['Received','Subject','From','To','Message-ID','CC','Date'] %}
+                    {% if k not in ['Received','Subject','From','To','Message-ID','CC','Date'] and k not in security_headers and not k.startswith('X-') %}
                     <tr>
                         <th>{{ k }}</th>
                         <td>{{ v }}</td>
