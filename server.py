@@ -196,9 +196,11 @@ def index():
             'MessageID': n.get('Message-ID') or getHeaderVal('Message-ID', mail_data),
             'Date': n.get('Date') or getHeaderVal('Date', mail_data),
         }
+
+        security_headers = ['Received-SPF', 'DKIM-Signature']
         return render_template(
             'index.html', data=r, delayed=delayed, summary=summary,
-            n=n, chart=chart)
+            n=n, chart=chart, security_headers=security_headers)
     else:
         return render_template('index.html')
 
