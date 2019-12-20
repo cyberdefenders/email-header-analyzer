@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
-from email.Parser import HeaderParser
+from email.parser import HeaderParser
 import time
 import dateutil.parser
 
@@ -84,7 +84,7 @@ def getHeaderVal(h, data, rex='\s*(.*?)\n\S+:\s'):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        mail_data = request.form['headers'].strip().encode('ascii', 'ignore')
+        mail_data = request.form['headers'].strip()
         r = {}
         n = HeaderParser().parsestr(mail_data)
         graph = []
@@ -100,15 +100,15 @@ def index():
                 line = received[i].split(';')
             else:
                 line = received[i].split('\r\n')
-            line = map(str.strip, line)
-            line = map(lambda x: x.replace('\r\n', ' '), line)
+            line = list(map(str.strip, line))
+            line = [x.replace('\r\n', ' ') for x in line]
             try:
                 if ';' in received[i + 1]:
                     next_line = received[i + 1].split(';')
                 else:
                     next_line = received[i + 1].split('\r\n')
-                next_line = map(str.strip, next_line)
-                next_line = map(lambda x: x.replace('\r\n', ''), next_line)
+                next_line = list(map(str.strip, next_line))
+                next_line = [x.replace('\r\n', '') for x in next_line]
             except IndexError:
                 next_line = None
 
@@ -153,22 +153,19 @@ def index():
                     'Timestmp': org_time,
                     'Time': ftime,
                     'Delay': delay,
-                    'Direction': map(
-                        lambda x: x.replace('\n', ' '),
-                        map(str.strip, data[0])
-                    )
+                    'Direction': [x.replace('\n', ' ') for x in list(map(str.strip, data[0]))]
                 }
                 c -= 1
             except IndexError:
                 pass
 
-        for i in r.values():
+        for i in list(r.values()):
             if i['Direction'][0]:
                 graph.append(["From: %s" % i['Direction'][0], i['Delay']])
             else:
                 graph.append(["By: %s" % i['Direction'][1], i['Delay']])
 
-        totalDelay = sum(map(lambda x: x['Delay'], r.values()))
+        totalDelay = sum([x['Delay'] for x in list(r.values())])
         fTotalDelay = utility_processor()['duration'](totalDelay)
         delayed = True if totalDelay else False
 
