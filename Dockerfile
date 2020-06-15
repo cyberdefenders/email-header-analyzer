@@ -1,13 +1,12 @@
-FROM alpine:3.6
+FROM python:3-alpine
 
-RUN apk update \
-    && apk upgrade \
-    && apk add python py2-pip
+WORKDIR /usr/src/mha
 
-COPY . /mha
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r /mha/requirements.txt
+COPY mha/ .
 
-WORKDIR /mha
 EXPOSE 8080
-CMD ["/usr/bin/python", "/mha/server.py", "-b", "0.0.0.0"]
+
+ENTRYPOINT ["python", "/usr/src/mha/server.py", "-b", "0.0.0.0"]

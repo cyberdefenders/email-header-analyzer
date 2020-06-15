@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  mha:
+    container_name: mha
+    build: .
+    image: mha:latest
+    restart: unless-stopped
+    ports:
+     - "8080:8080"
+    command: --debug
