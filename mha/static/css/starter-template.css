@@ -5,3 +5,13 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+.icons {
+  padding-right: 13px;
+  font-size: large;
+}
+.icons>li>a{
+  padding-top: 15px  !important;
+  padding-bottom: 15px  !important;
+  padding: 10px 8px;
+}
