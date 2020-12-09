@@ -198,7 +198,7 @@ def index():
                             'DKIM-Signature', 'ARC-Authentication-Results']
         return render_template(
             'index.html', data=r, delayed=delayed, summary=summary,
-            n=n, chart=chart, security_headers=security_headers)
+            n=n, chart=chart, security_headers=security_headers, mail_data=mail_data)
     else:
         return render_template('index.html')
 
