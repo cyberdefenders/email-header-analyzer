@@ -143,7 +143,8 @@ def index():
                     )""", line[0], re.DOTALL | re.X)
 
             delay = (org_time - next_time).seconds
-            if delay < 0:
+            delay_days = (org_time - next_time).days
+            if delay_days < 0:
                 delay = 0
 
             try:
