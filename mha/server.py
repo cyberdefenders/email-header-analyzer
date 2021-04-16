@@ -211,6 +211,10 @@ def index():
     else:
         return render_template('index.html')
 
+# do some configuration
+app.config['UPLOAD_FOLDER']	= "."
+app.config['MAX_CONTENT-PATH'] = 100000
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Mail Header Analyser")
@@ -221,6 +225,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     app.debug = args.debug
-    app.config['UPLOAD_FOLDER']	= "."
-    app.config['MAX_CONTENT-PATH'] = 100000
     app.run(host=args.bind, port=args.port)
