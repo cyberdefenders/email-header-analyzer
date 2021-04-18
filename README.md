@@ -84,3 +84,39 @@ HowTo enable debugging. Add in the docker `docker-compose.yml` file the line
 ```yaml
 command: --debug
 ```
+
+### Running MHA behind gunicorn & apache
+
+To run MHA as http://yoursite.domain/mha, using apache & unicorn, you need to run gunicorn with  
+the evnironmanet variable `SCRIPT_NAME` set to `/mha`. You also need to `ProxyPass` with the `/mha` suffix.
+
+
+Apache Configuration 
+```
+<Location /mha >
+	ProxyPass http://127.0.0.1:5011/mha/
+   	ProxyPassReverse http://127.0.0.1:5011/mha/
+
+	#LogLevel debug
+</Location>
+```
+
+Here is an example of service file to add to your `/etc/systemd/system`.
+(assuming you created your virtualenv as venv, if not the case, please adapt the paths)
+```
+[Unit]
+Description=Gunicorn Instance for MHA 
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+Environment="SCRIPT_NAME=/mha"
+WorkingDirectory=<PATH_TO_MHA_ROOT>/email-header-analyzer 
+Environment="PATH=<PATH_TO_MHA_ROOT>/email-header-analyzer/venv/bin"
+ExecStart=<PATH_TO_MHA_ROOT>/email-header-analyzer/venv/bin/gunicorn --workers 3 --bind localhost:5011 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
+```
+
