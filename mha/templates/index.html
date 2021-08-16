@@ -180,12 +180,16 @@
         {% else %}
         <div class="row">
             <div class="col-md-12">
-                <form method="POST">
+                <form method="POST" enctype = "multipart/form-data">
                     <div class="form-group">
                         <textarea name='headers' class="form-control" rows="25" placeholder="Paste the header in here."
-                            autofocus required></textarea>
+                            autofocus></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Analyze This !</button>
+                    or 
+                    <div class="form-control">
+                        <input type = "file" name = "file" />
+                    </div>
+                    <button type="sub mit" class="btn btn-primary btn-lg btn-block">Analyze This !</button>
                 </form>
             </div>
         </div>

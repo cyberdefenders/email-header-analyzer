@@ -1,0 +1,14 @@
+[Unit]
+Description=Gunicorn Instance for MHA 
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+Environment="SCRIPT_NAME=/mha"
+WorkingDirectory=<PATH_TO_MHA_ROOT>/email-header-analyzer 
+Environment="PATH=<PATH_TO_MHA_ROOT>/email-header-analyzer/venv/bin"
+ExecStart=<PATH_TO_MHA_ROOT>/email-header-analyzer/venv/bin/gunicorn --workers 3 --bind localhost:5011 wsgi:app
+
+[Install]
+WantedBy=multi-user.target

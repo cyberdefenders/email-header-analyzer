@@ -88,7 +88,16 @@ def getHeaderVal(h, data, rex='\s*(.*?)\n\S+:\s'):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        mail_data = request.form['headers'].strip()
+        # fill mail data with either uploaded file or form, upload has priority
+        mail_data = ""
+        try: 
+            # if there is a file upload, read the file, and decode the binary stream
+            eml = request.files['file']
+            mail_data = eml.read().decode()
+        except Exception as e: 
+            # if anything goes wrong, revert to form
+            mail_data = request.form['headers'].strip()
+
         r = {}
         n = HeaderParser().parsestr(mail_data)
         graph = []
@@ -205,6 +214,10 @@ def index():
             n=n, chart=chart, security_headers=security_headers)
     else:
         return render_template('index.html')
+
+# do some configuration
+app.config['UPLOAD_FOLDER']	= "."
+app.config['MAX_CONTENT-PATH'] = 100000
 
 
 if __name__ == '__main__':
