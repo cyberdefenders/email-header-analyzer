@@ -14,7 +14,7 @@ E-Mail header analyzer is a tool written in [flask](http://flask.pocoo.org/) for
 | ---- | --- | ----- |
 | [MessageHeader](https://toolbox.googleapps.com/apps/messageheader/) | Google | Not showing all the hops. |
 | [EmailHeaders](https://mxtoolbox.com/Public/Tools/EmailHeaders.aspx) | Mxtoolbox | Not accurate and slow. |
-| [Message Header Analyzer](https://testconnectivity.microsoft.com/MHA/Pages/mha.aspx) | Microsoft | Broken UI. |
+| [Message Header Analyzer](https://mha.azurewebsites.net/) | Microsoft |  |
 
 
 ## Installation
