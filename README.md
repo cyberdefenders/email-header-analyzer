@@ -66,7 +66,7 @@ A `docker-compose` file is provided if you wish to use docker-compose.
 
 Clone the GitHub repo:
 ```
-git clone https://github.com/lnxg33k/email-header-analyzer.git
+git clone https://github.com/cyberdefenders/email-header-analyzer.git
 cd email-header-analyzer
 ```
 
