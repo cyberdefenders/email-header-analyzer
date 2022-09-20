@@ -51,7 +51,7 @@ Everything should go well, now visit [http://localhost:8080](http://localhost:80
 A `Dockerfile` is provided if you wish to build a docker image.
 
 ```
-docker build -t mha:latest .
+docker build -t mha:latest . --network=host
 ```
 
 You can then run a container with:
