@@ -34,12 +34,15 @@ def utility_processor():
         if ip:
             ip = ip[0]  # take the 1st ip and ignore the rest
             if IP(ip).iptype() == 'PUBLIC':
-                r = reader.country(ip).country
-                if r.iso_code and r.name:
-                    return {
-                        'iso_code': r.iso_code.lower(),
-                        'country_name': r.name
-                    }
+                try:
+                    r = reader.country(ip).country
+                    if r.iso_code and r.name:
+                        return {
+                            'iso_code': r.iso_code.lower(),
+                            'country_name': r.name
+                        }
+                except:
+                    pass
     return dict(country=getCountryForIP)
 
 
