@@ -1,4 +1,4 @@
-## E-Mail Header Analyzer (MHA)
+## E-Mail Header Analyzer (MHA) with IPv6 Support
 ![mha](https://cloud.githubusercontent.com/assets/1170490/18221866/b7b362d6-718e-11e6-9fa0-2e7f8bc2b9d7.png)
 
 

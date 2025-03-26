@@ -21,27 +21,59 @@ app = Flask(__name__)
 reader = geoip2.database.Reader(
     '%s/data/GeoLite2-Country.mmdb' % app.static_folder)
 
+def expand_ipv6(ip):
+    # Ensure the IP starts with a valid format
+    if ip.startswith(':'):
+        ip = ip[1:]
+
+    try:
+        # Try expanding the IPv6 address
+        return str(ipaddress.IPv6Address(ip).exploded)
+    except ValueError:
+        return None
 
 @app.context_processor
 def utility_processor():
     def getCountryForIP(line):
-        ipv4_address = re.compile(r"""
-            \b((?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.
-            (?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.
-            (?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.
-            (?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))\b""", re.X)
-        ip = ipv4_address.findall(line)
-        if ip:
-            ip = ip[0]  # take the 1st ip and ignore the rest
-            if IP(ip).iptype() == 'PUBLIC':
-                r = reader.country(ip).country
-                if r.iso_code and r.name:
-                    return {
-                        'iso_code': r.iso_code.lower(),
-                        'country_name': r.name
-                    }
-    return dict(country=getCountryForIP)
+        print(f"Processing line: {line}")  # Debugging output
+        
+        # Define regex for IPv4 and IPv6
+        ipv4_pattern = r'\b((?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))\b'
+        ipv6_pattern = r'\b([a-fA-F0-9:]+(?::[a-fA-F0-9]{1,4}){1,7})\b'
 
+        # Extract IPs using regex
+        ipv4_matches = re.findall(ipv4_pattern, line)
+        ipv6_matches = re.findall(ipv6_pattern, line)
+
+        # Debugging output for regex results
+        print(f"Extracted IPv4: {ipv4_matches}")
+        print(f"Extracted IPv6: {ipv6_matches}")
+
+        # Check if we have an IPv4 or IPv6 to work with
+        ip = ipv4_matches[0] if ipv4_matches else (ipv6_matches[0] if ipv6_matches else None)
+        if ip:
+            print(f"IP selected for lookup: {ip}")  # Debugging output
+            
+            # If it's IPv6, expand it
+            if ':' in ip:
+                ip = expand_ipv6(ip)  # Expand IPv6 address if shorthand
+                print(f"Expanded IPv6: {ip}")  # Debugging output
+            
+            # Skip IP type check and directly perform the GeoIP lookup
+            try:
+                r = reader.country(ip).country
+                print(f"GeoIP lookup success: {ip} -> {r.name}")  # Debugging output
+                return {
+                    'iso_code': r.iso_code.lower(),
+                    'country_name': r.name
+                }
+            except Exception as e:
+                print(f"Error with IP {ip}: {e}")  # Debugging output
+
+        print("No valid IP found in line")  # Debugging output
+        return None
+
+    return dict(country=getCountryForIP)
 
 @app.context_processor
 def utility_processor():
