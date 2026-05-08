@@ -5,6 +5,7 @@ from flask import request
 from email.parser import HeaderParser
 import time
 import dateutil.parser
+import io
 
 from datetime import datetime
 import re
@@ -81,10 +82,51 @@ def getHeaderVal(h, data, rex='\s*(.*?)\n\S+:\s'):
         return None
 
 
+def extract_headers_from_upload(uploaded_file):
+    """Return (header_string, error_string) from an uploaded .eml or .msg file."""
+    filename = uploaded_file.filename.lower()
+    file_bytes = uploaded_file.read()
+
+    if filename.endswith('.eml'):
+        return file_bytes.decode('utf-8', errors='replace').strip(), None
+
+    if filename.endswith('.msg'):
+        try:
+            import extract_msg
+            msg = extract_msg.openMsg(io.BytesIO(file_bytes))
+            header_obj = msg.header
+            if header_obj is None:
+                return None, 'No transport headers found in this .msg file.'
+            if isinstance(header_obj, str):
+                return header_obj.strip(), None
+            # email.message.Message object
+            return ''.join('%s: %s\r\n' % (k, v) for k, v in header_obj.items()).strip(), None
+        except ImportError:
+            return None, 'extract-msg is not installed. Run: pip install extract-msg'
+        except Exception as e:
+            return None, 'Failed to parse .msg file: %s' % str(e)
+
+    return None, 'Unsupported file type. Please upload a .eml or .msg file.'
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        mail_data = request.form['headers'].strip()
+        error = None
+        mail_data = None
+
+        uploaded_file = request.files.get('email_file')
+        if uploaded_file and uploaded_file.filename:
+            mail_data, error = extract_headers_from_upload(uploaded_file)
+        else:
+            mail_data = request.form.get('headers', '').strip()
+
+        if error:
+            return render_template('index.html', error=error)
+
+        if not mail_data:
+            return render_template('index.html', error='Please paste headers or upload a .eml / .msg file.')
+
         r = {}
         n = HeaderParser().parsestr(mail_data)
         graph = []
@@ -198,7 +240,8 @@ def index():
                             'DKIM-Signature', 'ARC-Authentication-Results']
         return render_template(
             'index.html', data=r, delayed=delayed, summary=summary,
-            n=n, chart=chart, security_headers=security_headers)
+            n=n, chart=chart, security_headers=security_headers,
+            raw_headers=mail_data)
     else:
         return render_template('index.html')
 
