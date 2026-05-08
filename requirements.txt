@@ -4,3 +4,4 @@ IPy
 geoip2
 python-dateutil
 gunicorn
+extract-msg
